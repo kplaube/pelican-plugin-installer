@@ -2,9 +2,10 @@ import click
 
 
 @click.command()
-@click.option('--as-cowboy', '-c', is_flag=True, help='Greet as a cowboy.')
-@click.argument('name', default='world', required=False)
-def main(name, as_cowboy):
+@click.option('--delete', 'operation', flag_value='delete', help='Delete a specific plugin.')
+@click.option('--install', 'operation', flag_value='install', help='Install a specific plugin.')
+@click.option('--update', 'operation', flag_value='update', help='Update a specific plugin.')
+@click.argument('plugin_name', default='world', required=True)
+def main(plugin_name, operation):
     """Installs Pelican Plugins in an easy way"""
-    greet = 'Howdy' if as_cowboy else 'Hello'
-    click.echo('{0}, {1}.'.format(greet, name))
+    click.echo("Operation: {0}; Plugin: {1}".format(operation, plugin_name))
