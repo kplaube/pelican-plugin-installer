@@ -48,8 +48,9 @@ def discover_plugin_paths(config_file):
 
     sys.path.append(site_path)
     pelicanconf = __import__(module_name)
+    plugins_path = pelicanconf.PLUGIN_PATHS
 
-    return list(map(lambda path: os.path.join(site_path, path), pelicanconf.PLUGIN_PATHS))
+    return list(map(lambda path: os.path.join(site_path, path), plugins_path))
 
 
 @click.command()

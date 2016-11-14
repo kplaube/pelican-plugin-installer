@@ -4,6 +4,7 @@ Installs Pelican Plugins in an easy way
 from setuptools import find_packages, setup
 
 dependencies = ['click']
+test_dependencies = ['pytest', 'pytest-runner', 'pytest-mock']
 
 setup(
     name='pelican-plugin-installer',
@@ -19,6 +20,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=dependencies,
+    tests_require=test_dependencies,
     entry_points={
         'console_scripts': [
             'pelican-plugin-installer = pelican_plugin_installer.cli:main',
