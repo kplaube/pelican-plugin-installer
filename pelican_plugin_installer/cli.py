@@ -6,6 +6,14 @@ import sys
 PLUGINS_REMOTE_REPOSITORY = 'https://github.com/getpelican/pelican-plugins.git'
 PLUGINS_LOCAL_REPOSITORY = os.path.join(os.path.expanduser('~'), '.pelican', 'plugins')
 
+GIT_CLONE_COMMAND = "git clone {0} {1}".format(
+    PLUGINS_REMOTE_REPOSITORY,
+    PLUGINS_LOCAL_REPOSITORY
+)
+GIT_SUBMODULE_COMMAND = "cd {0}; git submodule init; git submodule update".format(
+    PLUGINS_LOCAL_REPOSITORY,
+)
+
 
 def is_local_repository_initilized():
     return os.path.exists(PLUGINS_LOCAL_REPOSITORY)
@@ -21,13 +29,8 @@ def is_plugin_already_installed(plugin_name, plugin_paths):
 
 def initialize_local_repository():
     os.makedirs(PLUGINS_LOCAL_REPOSITORY)
-    os.system("git clone {0} {1}".format(
-        PLUGINS_REMOTE_REPOSITORY,
-        PLUGINS_LOCAL_REPOSITORY,
-    ))
-    os.system("cd {0}; git submodule init; git submodule update".format(
-        PLUGINS_LOCAL_REPOSITORY,
-    ))
+    os.system(GIT_CLONE_COMMAND)
+    os.system(GIT_SUBMODULE_COMMAND)
 
 
 def install_plugin(plugin_name, plugin_path):
