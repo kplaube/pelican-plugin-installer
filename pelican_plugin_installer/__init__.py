@@ -2,7 +2,7 @@ import os
 import shutil
 import sys
 
-from .exceptions import AlreadyInstalledError
+from .exceptions import AlreadyInstalledError, PluginDoesNotExistError
 
 PLUGINS_REMOTE_REPOSITORY = 'https://github.com/getpelican/pelican-plugins.git'
 PLUGINS_LOCAL_REPOSITORY = os.path.join(os.path.expanduser('~'), '.pelican', 'plugins')
@@ -39,6 +39,9 @@ def install_plugin(plugin_name, plugins_path):
     if not _is_local_repository_initialized():
         _initialize_local_repository()
 
+    if not _plugin_exists(plugin_name):
+        raise PluginDoesNotExistError
+
     _copy_plugin_files(plugin_name, plugins_path[0])
 
 
@@ -53,6 +56,12 @@ def _is_plugin_already_installed(plugin_name, plugins_path):
 
 def _is_local_repository_initialized():
     return os.path.exists(PLUGINS_LOCAL_REPOSITORY)
+
+
+def _plugin_exists(plugin_name):
+    plugin_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, plugin_name)
+
+    return os.path.exists(plugin_path)
 
 
 def _initialize_local_repository():

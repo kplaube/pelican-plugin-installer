@@ -1,7 +1,7 @@
 import click
 
 from . import discover_plugins_path, install_plugin
-from .exceptions import AlreadyInstalledError
+from .exceptions import AlreadyInstalledError, PluginDoesNotExistError
 
 
 @click.command()
@@ -11,14 +11,12 @@ from .exceptions import AlreadyInstalledError
 def main(plugin_name, operation, config_file):
     """Installs Pelican Plugins in an easy way"""
 
-    click.echo('Discovering Pelican configuration file...')
     plugins_path = discover_plugins_path(config_file)
 
     if operation == 'install':
         try:
-            click.echo('Installing plugin...')
             install_plugin(plugin_name, plugins_path)
-        except AlreadyInstalledError as e:
+        except (AlreadyInstalledError, PluginDoesNotExistError) as e:
             click.echo(e.msg)
         else:
             click.echo("Plugin installed!")
