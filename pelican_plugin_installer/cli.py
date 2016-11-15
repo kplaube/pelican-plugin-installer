@@ -5,9 +5,7 @@ from .exceptions import AlreadyInstalledError
 
 
 @click.command()
-@click.option('--delete', '-d', 'operation', flag_value='delete', help='Delete a specific plugin.')
 @click.option('--install', '-i', 'operation', flag_value='install', help='Install a specific plugin.')
-@click.option('--update', '-u', 'operation', flag_value='update', help='Update a specific plugin.')
 @click.option('--config', '-c', 'config_file', default='pelicanconf.py', help='The path to Pelican configuration file.')
 @click.argument('plugin_name', required=False)
 def main(plugin_name, operation, config_file):
