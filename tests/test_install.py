@@ -9,7 +9,7 @@ def test_discover_a_pelican_conf_file(pelicanconf, runner):
     assert pelicanconf.call_count == 1
 
 
-def test_initialize_local_repository(mocker, mock_file_operations, runner):
+def test_initialize_local_repository(mocker, mock_install_operations, runner):
     runner.invoke(cli.main, ['-i', 'plugin-name', '-c', 'pelicanconf.py'])
 
     expected = (
@@ -21,7 +21,7 @@ def test_initialize_local_repository(mocker, mock_file_operations, runner):
     os.system.assert_has_calls(expected)
 
 
-def test_install_plugin_by_copying_its_files_to_plugins_path(mock_file_operations, runner):
+def test_install_plugin_by_copying_its_files_to_plugins_path(mock_install_operations, runner):
     runner.invoke(cli.main, ['-i', 'plugin-name', '-c', 'pelicanconf.py'])
 
     src_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, 'plugin-name')

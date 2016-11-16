@@ -57,6 +57,25 @@ def delete_plugin(plugin_name, plugins_path):
     shutil.rmtree(installed_plugin_path)
 
 
+def update_plugin(plugin_name, plugins_path):
+    installed_plugin_path = _find_plugin_in_plugins_path(plugin_name, plugins_path)
+
+    if not installed_plugin_path:
+        raise exceptions.NotInstalledError
+
+    if not _is_local_repository_initialized():
+        _initialize_local_repository()
+
+    if not _plugin_exists(plugin_name):
+        raise exceptions.PluginDoesNotExistError
+
+    src = os.path.join(PLUGINS_LOCAL_REPOSITORY, plugin_name)
+    dst = os.path.join(plugins_path[0], plugin_name)
+
+    shutil.rmtree(dst)
+    shutil.copytree(src, dst)
+
+
 def _find_plugin_in_plugins_path(plugin_name, plugins_path):
     for path in plugins_path:
         plugin_path = os.path.join(path, plugin_name)
