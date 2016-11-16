@@ -30,3 +30,15 @@ It will install the plugin into the first folder listed in your `PLUGINS_PATH`. 
 ```
 $ pelican-plugin-installer -i pin_to_top -c ~/my-pelican-site/pelicanconf.py
 ```
+
+Deleting a plugin uses the same principle as install operation. Just inform the plugin name, with the `-d` option:
+
+```
+$ pelican-plugin-installer -d pin_to_top -c ~/my-pelican-site/pelicanconf.py
+```
+
+You can always ask for help using the `--help` option:
+
+```
+$ pelican-plugin-installer --help
+```
