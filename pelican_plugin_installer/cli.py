@@ -3,6 +3,11 @@ import click
 from . import delete_plugin, discover_plugins_path, install_plugin
 from .exceptions import BaseException
 
+operations = {
+    'install': (install_plugin, ('Plugin installed!')),
+    'delete': (delete_plugin, ('Plugin removed!')),
+}
+
 
 @click.command()
 @click.option('--install', '-i', 'operation', flag_value='install', help='Install a specific plugin.')
@@ -14,23 +19,14 @@ def main(plugin_name, operation, config_file):
 
     plugins_path = discover_plugins_path(config_file)
 
-    if operation == 'install':
-        try:
-            install_plugin(plugin_name, plugins_path)
-        except BaseException as e:
-            click.echo(e.msg)
-        else:
-            click.echo('\n'.join([
-                'Plugin installed!',
-                "Don't forget to update the PLUGINS variable.",
-            ]))
-    if operation == 'delete':
-        try:
-            delete_plugin(plugin_name, plugins_path)
-        except BaseException as e:
-            click.echo(e.msg)
-        else:
-            click.echo('\n'.join([
-                'Plugin removed!',
-                "Don't forget to update the PLUGINS variable.",
-            ]))
+    fn = operations[operation][0]
+
+    try:
+        fn(plugin_name, plugins_path)
+    except BaseException as e:
+        click.echo(e.msg)
+    else:
+        success_msg = operations[operation][1]
+
+        click.echo(success_msg)
+        click.echo("Don't forget to update the PLUGINS variable.")

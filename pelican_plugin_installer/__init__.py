@@ -33,7 +33,7 @@ def discover_plugins_path(config_file):
 
 
 def install_plugin(plugin_name, plugins_path):
-    if _is_plugin_already_installed(plugin_name, plugins_path):
+    if _find_plugin_in_plugins_path(plugin_name, plugins_path):
         raise exceptions.AlreadyInstalledError
 
     if not _is_local_repository_initialized():
@@ -49,26 +49,21 @@ def install_plugin(plugin_name, plugins_path):
 
 
 def delete_plugin(plugin_name, plugins_path):
-    if not _is_plugin_already_installed(plugin_name, plugins_path):
+    installed_plugin_path = _find_plugin_in_plugins_path(plugin_name, plugins_path)
+
+    if not installed_plugin_path:
         raise exceptions.NotInstalledError
 
-    # TODO: _is_plugin_(...) should return the path
-    for plugin_path in plugins_path:
-        installed_plugin_path = os.path.join(plugin_path, plugin_name)
-
-        if not os.path.exists(installed_plugin_path):
-            continue
-
-        shutil.rmtree(installed_plugin_path)
+    shutil.rmtree(installed_plugin_path)
 
 
-def _is_plugin_already_installed(plugin_name, plugins_path):
+def _find_plugin_in_plugins_path(plugin_name, plugins_path):
     for path in plugins_path:
         plugin_path = os.path.join(path, plugin_name)
         if os.path.exists(plugin_path):
-            return True
+            return plugin_path
 
-    return False
+    return None
 
 
 def _is_local_repository_initialized():
