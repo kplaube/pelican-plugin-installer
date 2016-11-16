@@ -1,7 +1,7 @@
 import click
 
 from . import discover_plugins_path, install_plugin
-from .exceptions import AlreadyInstalledError, PluginDoesNotExistError
+from .exceptions import BaseException
 
 
 @click.command()
@@ -16,7 +16,7 @@ def main(plugin_name, operation, config_file):
     if operation == 'install':
         try:
             install_plugin(plugin_name, plugins_path)
-        except (AlreadyInstalledError, PluginDoesNotExistError) as e:
+        except BaseException as e:
             click.echo(e.msg)
         else:
             click.echo('\n'.join([
