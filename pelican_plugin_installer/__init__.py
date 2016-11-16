@@ -2,7 +2,7 @@ import os
 import shutil
 import sys
 
-from .exceptions import AlreadyInstalledError, PluginDoesNotExistError
+from . import exceptions
 
 PLUGINS_REMOTE_REPOSITORY = 'https://github.com/getpelican/pelican-plugins.git'
 PLUGINS_LOCAL_REPOSITORY = os.path.join(os.path.expanduser('~'), '.pelican', 'plugins')
@@ -34,15 +34,32 @@ def discover_plugins_path(config_file):
 
 def install_plugin(plugin_name, plugins_path):
     if _is_plugin_already_installed(plugin_name, plugins_path):
-        raise AlreadyInstalledError
+        raise exceptions.AlreadyInstalledError
 
     if not _is_local_repository_initialized():
         _initialize_local_repository()
 
     if not _plugin_exists(plugin_name):
-        raise PluginDoesNotExistError
+        raise exceptions.PluginDoesNotExistError
 
-    _copy_plugin_files(plugin_name, plugins_path[0])
+    src = os.path.join(PLUGINS_LOCAL_REPOSITORY, plugin_name)
+    dst = os.path.join(plugins_path[0], plugin_name)
+
+    shutil.copytree(src, dst)
+
+
+def delete_plugin(plugin_name, plugins_path):
+    if not _is_plugin_already_installed(plugin_name, plugins_path):
+        raise exceptions.NotInstalledError
+
+    # TODO: _is_plugin_(...) should return the path
+    for plugin_path in plugins_path:
+        installed_plugin_path = os.path.join(plugin_path, plugin_name)
+
+        if not os.path.exists(installed_plugin_path):
+            continue
+
+        shutil.rmtree(installed_plugin_path)
 
 
 def _is_plugin_already_installed(plugin_name, plugins_path):
@@ -68,10 +85,3 @@ def _initialize_local_repository():
     os.makedirs(PLUGINS_LOCAL_REPOSITORY)
     os.system(GIT_CLONE_COMMAND)
     os.system(GIT_SUBMODULE_COMMAND)
-
-
-def _copy_plugin_files(plugin_name, plugin_path):
-    src = os.path.join(PLUGINS_LOCAL_REPOSITORY, plugin_name)
-    dst = os.path.join(plugin_path, plugin_name)
-
-    shutil.copytree(src, dst)

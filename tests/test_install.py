@@ -1,6 +1,6 @@
-from pelican_plugin_installer import cli
 from pelican_plugin_installer import (
-    GIT_CLONE_COMMAND, GIT_SUBMODULE_COMMAND, PLUGINS_LOCAL_REPOSITORY, os, shutil)
+    GIT_CLONE_COMMAND, GIT_SUBMODULE_COMMAND, PLUGINS_LOCAL_REPOSITORY, cli,
+    os, shutil)
 
 
 def test_discover_a_pelican_conf_file(pelicanconf, runner):
