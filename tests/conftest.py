@@ -22,7 +22,7 @@ def pelicanconf(mocker):
 @pytest.fixture
 def mock_file_operations(mocker):
     os_path_exists = mocker.patch('os.path.exists')
-    os_path_exists.return_value = False
+    os_path_exists.side_effect = [False, False, True]
 
     mocker.patch('os.makedirs')
     mocker.patch('os.system')
