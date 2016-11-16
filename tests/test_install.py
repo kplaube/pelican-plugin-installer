@@ -36,4 +36,16 @@ def test_warn_when_the_plugin_is_already_installed(mocker, runner):
 
     result = runner.invoke(cli.main, ['-i', 'plugin-name', '-c', 'pelicanconf.py'])
 
-    assert 'The plugin is already installed' in result.output.strip()
+    assert 'The plugin is already installed' in result.output
+
+
+def test_warn_when_plugin_doesnt_exist(mocker, runner):
+    os_path_exists = mocker.patch('os.path.exists')
+    os_path_exists.return_value = False
+
+    mocker.patch('os.makedirs')
+    mocker.patch('os.system')
+
+    result = runner.invoke(cli.main, ['-i', 'inexistent-plugin', '-c', 'pelicanconf.py'])
+
+    assert "The specified plugin doesn't exist" in result.output

@@ -19,5 +19,7 @@ def main(plugin_name, operation, config_file):
         except (AlreadyInstalledError, PluginDoesNotExistError) as e:
             click.echo(e.msg)
         else:
-            click.echo("Plugin installed!")
-            click.echo("Don't forget to update the PLUGINS variable.")
+            click.echo('\n'.join([
+                'Plugin installed!',
+                "Don't forget to update the PLUGINS variable.",
+            ]))
