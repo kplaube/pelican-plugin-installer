@@ -8,7 +8,7 @@ test_dependencies = ['pytest', 'pytest-runner', 'pytest-mock']
 
 setup(
     name='pelican-plugin-installer',
-    version='0.0.1',
+    version='0.0.2',
     url='https://github.com/kplaube/pelican-plugin-installer',
     license='GPL3',
     author='Klaus Laube',
