@@ -1,5 +1,7 @@
 # pelican-plugin-installer
 
+[![Build Status](https://travis-ci.org/kplaube/pelican-plugin-installer.svg?branch=master)](https://travis-ci.org/kplaube/pelican-plugin-installer)
+
 A simple command line tool to help you installing Pelican plugins.
 
 ## Installing
