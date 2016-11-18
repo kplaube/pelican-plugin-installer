@@ -37,6 +37,12 @@ Deleting a plugin uses the same principle as install operation. Just inform the 
 $ pelican-plugin-installer -d pin_to_top -c ~/my-pelican-site/pelicanconf.py
 ```
 
+In order to update an already installed plugin, you can use the `-u` option:
+
+```
+$ pelican-plugin-installer -u pin_to_top -c ~/my-pelican-site/pelicanconf.py
+```
+
 You can always ask for help using the `--help` option:
 
 ```
