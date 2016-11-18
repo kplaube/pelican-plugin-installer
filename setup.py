@@ -20,7 +20,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=dependencies,
-    tests_require=test_dependencies,
+    setup_requires=test_dependencies,
     entry_points={
         'console_scripts': [
             'pelican-plugin-installer = pelican_plugin_installer.cli:main',
