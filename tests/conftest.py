@@ -33,9 +33,10 @@ def mock_install_operations(mocker):
 @pytest.fixture
 def mock_update_operations(mocker):
     os_path_exists = mocker.patch('os.path.exists')
-    os_path_exists.side_effect = [True, False, False]
+    os_path_exists.side_effect = [True, False, True]
 
     mocker.patch('os.makedirs')
     mocker.patch('os.system')
 
+    mocker.patch('shutil.rmtree')
     mocker.patch('shutil.copytree')
