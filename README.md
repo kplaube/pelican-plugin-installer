@@ -4,15 +4,19 @@ A simple command line tool to help you installing Pelican plugins.
 
 ## Installing
 
-The project is still alpha, so we haven't published it to [PyPI](https://pypi.python.org/pypi) yet. To start using it right now, the proper way is through `git clone`:
+It's possible to install the package through `pip`:
+
+```
+$ pip install pelican-plugin-installer
+```
+
+But if you like to live on the edge, just `git clone` this repository:
 
 ```
 $ git clone git@github.com:kplaube/pelican-plugin-installer.git
 $ cd pelican-plugin-installer/
 $ python setup.py install
 ```
-
-Soon we'll publish the package, so the installation will be done through `pip install` :)
 
 ## Using
 
