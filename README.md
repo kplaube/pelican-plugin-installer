@@ -54,3 +54,26 @@ You can always ask for help using the `--help` option:
 ```
 $ pelican-plugin-installer --help
 ```
+
+## Contributing
+
+Contributions are very welcome!
+
+We are using `py.test` and `tox` to ensure the application is working properly.
+It's possible to execute tests through `Makefile` tasks:
+
+```
+$ make test
+```
+
+To run tests against multiple Python versions:
+
+```
+$ make tox
+```
+
+Always remeber to follow the PEP8 recommendations:
+
+```
+$ make lint
+```
