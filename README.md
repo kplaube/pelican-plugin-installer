@@ -66,14 +66,4 @@ It's possible to execute tests through `Makefile` tasks:
 $ make test
 ```
 
-To run tests against multiple Python versions:
-
-```
-$ make tox
-```
-
-Always remeber to follow the PEP8 recommendations:
-
-```
-$ make lint
-```
+It'll run tests against some Python versions, and ensure the PEP8 is being followed strictly.
