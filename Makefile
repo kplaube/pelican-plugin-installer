@@ -6,12 +6,11 @@ help:
 	@echo 'lint ........................ Execute code quality tests'
 	@echo 'release ..................... Send the package to Pypi'
 	@echo 'setup ....................... Setup the project for development'
-	@echo 'test ........................ Run py.test tests'
-	@echo 'tox ......................... Run tox tests'
+	@echo 'test ........................ Run project tests'
 	@echo ''
 
 lint:
-	flake8 pelican_plugin_installer/
+	flake8 pelican_plugin_installer tests --max-line-length=120
 
 release:
 	rm -rf dist/*
@@ -22,7 +21,4 @@ setup:
 	python setup.py develop
 
 test:
-	python setup.py test
-
-tox:
 	tox
