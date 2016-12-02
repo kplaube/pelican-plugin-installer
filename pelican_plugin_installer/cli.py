@@ -1,6 +1,6 @@
 import click
 
-from . import (
+from .operations import (
     delete_plugin, discover_plugins_path, install_plugin, update_plugin)
 from .exceptions import BaseException
 

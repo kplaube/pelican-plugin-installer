@@ -1,4 +1,5 @@
-from pelican_plugin_installer import cli, shutil
+from pelican_plugin_installer import cli
+from pelican_plugin_installer.operations import shutil
 
 
 def test_remove_a_plugin_from_pelican_project(mocker, pelicanconf, runner):

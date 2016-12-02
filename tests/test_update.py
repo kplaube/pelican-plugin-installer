@@ -1,5 +1,6 @@
-from pelican_plugin_installer import (
-    GIT_CLONE_COMMAND, GIT_SUBMODULE_COMMAND, PLUGINS_LOCAL_REPOSITORY, cli,
+from pelican_plugin_installer import cli
+from pelican_plugin_installer.operations import (
+    GIT_CLONE_COMMAND, GIT_SUBMODULE_COMMAND, PLUGINS_LOCAL_REPOSITORY,
     os, shutil)
 
 
