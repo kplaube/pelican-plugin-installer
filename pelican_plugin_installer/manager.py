@@ -7,7 +7,8 @@ from . import exceptions
 PLUGINS_REMOTE_REPOSITORY = 'https://github.com/getpelican/pelican-plugins.git'
 PLUGINS_LOCAL_REPOSITORY = os.path.join(os.path.expanduser('~'), '.pelican', 'plugins')
 
-GIT_CLONE_COMMAND = "git clone {0} {1}".format(
+GIT_CLONE_COMMAND_TEMPLATE = "git clone {0} {1}"
+GIT_CLONE_COMMAND = GIT_CLONE_COMMAND_TEMPLATE.format(
     PLUGINS_REMOTE_REPOSITORY,
     PLUGINS_LOCAL_REPOSITORY
 )
@@ -72,8 +73,16 @@ class PluginManager:
 class Plugin:
 
     def __init__(self, name):
-        self.name = name
-        self.local_repository_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, name)
+        if name.startswith('https://github.com/'):
+            self.name = name.split('/')[-1]
+            self.local_repository_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, '_unofficial', self.name)
+
+            os.system(GIT_CLONE_COMMAND_TEMPLATE.format(
+                name, self.local_repository_path
+            ))
+        else:
+            self.name = name
+            self.local_repository_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, name)
 
     def copy(self, plugins_path):
         pelican_plugins_path = os.path.join(plugins_path[0], self.name)

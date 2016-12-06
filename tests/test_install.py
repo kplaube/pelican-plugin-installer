@@ -30,13 +30,32 @@ def test_initialize_local_repository(mocker, runner):
     os.system.assert_has_calls(expected)
 
 
-def test_install_plugin_by_copying_its_files_to_plugins_path(mock_install_operations, runner):
-    runner.invoke(cli.main, ['-i', 'plugin-name', '-c', 'pelicanconf.py'])
+def test_install_plugin_from_official_pelican_repository(mock_install_operations, runner):
+    result = runner.invoke(cli.main, ['-i', 'plugin-name', '-c', 'pelicanconf.py'])
 
     src_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, 'plugin-name')
     dst_path = '/tmp/plugins/plugin-name'
 
     shutil.copytree.assert_called_once_with(src_path, dst_path)
+
+    assert 'Plugin installed' in result.output
+
+
+def test_install_plugin_from_unofficial_pelican_repository(mock_install_operations, runner):
+    result = runner.invoke(cli.main, ['-i', 'https://github.com/kplaube/extended_meta', '-c', 'pelicanconf.py'])
+
+    src_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, '_unofficial/extended_meta')
+    dst_path = '/tmp/plugins/extended_meta'
+
+    shutil.copytree.assert_called_once_with(src_path, dst_path)
+    os.system.assert_called_with(
+        "git clone {0} {1}".format(
+            'https://github.com/kplaube/extended_meta',
+            '/Users/klaus/.pelican/plugins/_unofficial/extended_meta'
+        )
+    )
+
+    assert 'Plugin installed' in result.output
 
 
 def test_warn_when_the_plugin_is_already_installed(mocker, runner):
