@@ -1,17 +1,16 @@
 import click
 
-from .operations import (
-    delete_plugin, discover_plugins_path, install_plugin, update_plugin)
+from .operations import Plugin, PluginManager
 from .exceptions import BaseException
 
 CONTEXT_SETTINGS = dict(
     help_option_names=['-h', '--help'],
 )
 
-operations = {
-    'install': (install_plugin, ('Plugin installed!')),
-    'delete': (delete_plugin, ('Plugin removed!')),
-    'update': (update_plugin, ('Plugin updated!')),
+SUCCESS_MESSAGES = {
+    'install': 'Plugin installed!',
+    'delete': 'Plugin removed!',
+    'update': 'Plugin updated!',
 }
 
 
@@ -29,15 +28,18 @@ def main(ctx, plugin_name, operation, config_file):
         click.echo(ctx.get_help())
         return
 
-    plugins_path = discover_plugins_path(config_file)
-    fn = operations[operation][0]
+    plugin = Plugin(plugin_name)
+    manager = PluginManager(config_file)
+    manager.initialize_local_repository()
+
+    fn = getattr(manager, operation)
 
     try:
-        fn(plugin_name, plugins_path)
+        fn(plugin)
     except BaseException as e:
         click.echo(e.msg)
     else:
-        success_msg = operations[operation][1]
+        success_msg = SUCCESS_MESSAGES[operation]
 
         click.echo(success_msg)
         click.echo("Don't forget to update the PLUGINS variable.")

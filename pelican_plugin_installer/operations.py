@@ -16,86 +16,87 @@ GIT_SUBMODULE_COMMAND = "cd {0}; git submodule init; git submodule update".forma
 )
 
 
-def discover_plugins_path(config_file):
-    site_path = os.path.dirname(config_file)
+class PluginManager:
 
-    if site_path == '':
-        site_path = os.getcwd()
+    def __init__(self, config_file_path):
+        self._config_file_path = config_file_path
+        self._plugins_path = self._get_plugins_path(config_file_path)
 
-    file_name = os.path.basename(config_file)
-    module_name = os.path.splitext(file_name)[0]
+    def initialize_local_repository(self):
+        if os.path.exists(PLUGINS_LOCAL_REPOSITORY):
+            return
 
-    sys.path.append(site_path)
-    pelicanconf = __import__(module_name)
-    plugins_path = pelicanconf.PLUGIN_PATHS
+        os.makedirs(PLUGINS_LOCAL_REPOSITORY)
+        os.system(GIT_CLONE_COMMAND)
+        os.system(GIT_SUBMODULE_COMMAND)
 
-    return list(map(lambda path: os.path.join(site_path, path), plugins_path))
+    def install(self, plugin):
+        if plugin.is_installed(self._plugins_path):
+            raise exceptions.AlreadyInstalledError
 
+        if not plugin.exists():
+            raise exceptions.PluginDoesNotExistError
 
-def install_plugin(plugin_name, plugins_path):
-    if _find_plugin_in_plugins_path(plugin_name, plugins_path):
-        raise exceptions.AlreadyInstalledError
+        plugin.copy(self._plugins_path)
 
-    if not _is_local_repository_initialized():
-        _initialize_local_repository()
+    def delete(self, plugin):
+        if not plugin.is_installed(self._plugins_path):
+            raise exceptions.NotInstalledError
 
-    if not _plugin_exists(plugin_name):
-        raise exceptions.PluginDoesNotExistError
+        plugin.remove(self._plugins_path)
 
-    src = os.path.join(PLUGINS_LOCAL_REPOSITORY, plugin_name)
-    dst = os.path.join(plugins_path[0], plugin_name)
+    def update(self, plugin):
+        self.install(plugin)
 
-    shutil.copytree(src, dst)
+    def _get_plugins_path(self, config_file_path):
+        site_path = os.path.dirname(config_file_path)
 
+        if site_path == '':
+            site_path = os.getcwd()
 
-def delete_plugin(plugin_name, plugins_path):
-    installed_plugin_path = _find_plugin_in_plugins_path(plugin_name, plugins_path)
+        file_name = os.path.basename(config_file_path)
+        module_name = os.path.splitext(file_name)[0]
 
-    if not installed_plugin_path:
-        raise exceptions.NotInstalledError
+        sys.path.append(site_path)
+        pelicanconf = __import__(module_name)
+        plugins_path = pelicanconf.PLUGIN_PATHS
 
-    shutil.rmtree(installed_plugin_path)
-
-
-def update_plugin(plugin_name, plugins_path):
-    installed_plugin_path = _find_plugin_in_plugins_path(plugin_name, plugins_path)
-
-    if not installed_plugin_path:
-        raise exceptions.NotInstalledError
-
-    if not _is_local_repository_initialized():
-        _initialize_local_repository()
-
-    if not _plugin_exists(plugin_name):
-        raise exceptions.PluginDoesNotExistError
-
-    src = os.path.join(PLUGINS_LOCAL_REPOSITORY, plugin_name)
-    dst = os.path.join(plugins_path[0], plugin_name)
-
-    shutil.rmtree(dst)
-    shutil.copytree(src, dst)
+        return list(map(lambda path: os.path.join(site_path, path), plugins_path))
 
 
-def _find_plugin_in_plugins_path(plugin_name, plugins_path):
-    for path in plugins_path:
-        plugin_path = os.path.join(path, plugin_name)
-        if os.path.exists(plugin_path):
-            return plugin_path
+class Plugin:
 
-    return None
+    def __init__(self, name):
+        self.name = name
+        self.local_repository_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, name)
 
+    def copy(self, plugins_path):
+        pelican_plugins_path = os.path.join(plugins_path[0], self.name)
 
-def _is_local_repository_initialized():
-    return os.path.exists(PLUGINS_LOCAL_REPOSITORY)
+        if os.path.exists(pelican_plugins_path):
+            shutil.rmtree(pelican_plugins_path)
 
+        shutil.copytree(self.local_repository_path, pelican_plugins_path)
 
-def _plugin_exists(plugin_name):
-    plugin_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, plugin_name)
+    def remove(self, plugins_path):
+        plugin_path = self.find_in(plugins_path)
 
-    return os.path.exists(plugin_path)
+        if not plugin_path:
+            return False
 
+        shutil.rmtree(plugin_path)
 
-def _initialize_local_repository():
-    os.makedirs(PLUGINS_LOCAL_REPOSITORY)
-    os.system(GIT_CLONE_COMMAND)
-    os.system(GIT_SUBMODULE_COMMAND)
+    def exists(self):
+        return os.path.exists(self.local_repository_path)
+
+    def is_installed(self, plugins_path):
+        return bool(self.find_in(plugins_path))
+
+    def find_in(self, plugins_path):
+        for path in plugins_path:
+            plugin_path = os.path.join(path, self.name)
+
+            if os.path.exists(plugin_path):
+                return plugin_path
+
+        return None

@@ -10,7 +10,15 @@ def test_discover_a_pelican_conf_file(pelicanconf, runner):
     assert pelicanconf.call_count == 1
 
 
-def test_initialize_local_repository(mocker, mock_install_operations, runner):
+def test_initialize_local_repository(mocker, runner):
+    os_path_exists = mocker.patch('os.path.exists')
+    os_path_exists.side_effect = [False, False, True]
+
+    mocker.patch('os.makedirs')
+    mocker.patch('os.system')
+
+    mocker.patch('shutil.copytree')
+
     runner.invoke(cli.main, ['-i', 'plugin-name', '-c', 'pelicanconf.py'])
 
     expected = (
