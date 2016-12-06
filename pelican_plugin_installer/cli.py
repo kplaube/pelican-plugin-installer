@@ -1,6 +1,6 @@
 import click
 
-from .operations import Plugin, PluginManager
+from .manager import Plugin, PluginManager
 from .exceptions import BaseException
 
 CONTEXT_SETTINGS = dict(
