@@ -1,8 +1,11 @@
 import os
+import re
 import shutil
 import sys
 
 from . import exceptions
+
+OFFICIAL_REPOSITORY_URL_PATTERN = r'https?://github\.com/'
 
 PLUGINS_REMOTE_REPOSITORY = 'https://github.com/getpelican/pelican-plugins.git'
 PLUGINS_LOCAL_REPOSITORY = os.path.join(os.path.expanduser('~'), '.pelican', 'plugins')
@@ -43,6 +46,9 @@ class PluginManager:
         if not plugin.exists():
             raise exceptions.PluginDoesNotExistError
 
+        if not plugin.is_official():
+            plugin.initialize_local_repository()
+
         plugin.copy(self._plugins_path)
 
     def delete(self, plugin):
@@ -73,16 +79,19 @@ class PluginManager:
 class Plugin:
 
     def __init__(self, name):
-        if name.startswith('https://github.com/'):
+        self.id = name
+
+        if self.is_official():
+            self.name = name
+            self.local_repository_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, name)
+        else:
             self.name = name.split('/')[-1]
             self.local_repository_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, '_unofficial', self.name)
 
-            os.system(GIT_CLONE_COMMAND_TEMPLATE.format(
-                name, self.local_repository_path
-            ))
-        else:
-            self.name = name
-            self.local_repository_path = os.path.join(PLUGINS_LOCAL_REPOSITORY, name)
+    def initialize_local_repository(self):
+        os.system(GIT_CLONE_COMMAND_TEMPLATE.format(
+            self.id, self.local_repository_path
+        ))
 
     def copy(self, plugins_path):
         pelican_plugins_path = os.path.join(plugins_path[0], self.name)
@@ -103,9 +112,6 @@ class Plugin:
     def exists(self):
         return os.path.exists(self.local_repository_path)
 
-    def is_installed(self, plugins_path):
-        return bool(self.find_in(plugins_path))
-
     def find_in(self, plugins_path):
         for path in plugins_path:
             plugin_path = os.path.join(path, self.name)
@@ -114,3 +120,12 @@ class Plugin:
                 return plugin_path
 
         return None
+
+    def is_installed(self, plugins_path):
+        return bool(self.find_in(plugins_path))
+
+    def is_official(self):
+        return not re.search(
+            OFFICIAL_REPOSITORY_URL_PATTERN,
+            self.id
+        )
