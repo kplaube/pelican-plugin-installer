@@ -30,6 +30,11 @@ class PluginManager:
         os.system(GIT_CLONE_COMMAND)
         os.system(GIT_SUBMODULE_COMMAND)
 
+    def run(self, operation, plugin):
+        fn = getattr(self, operation)
+
+        return fn(plugin)
+
     def install(self, plugin):
         if plugin.is_installed(self._plugins_path):
             raise exceptions.AlreadyInstalledError

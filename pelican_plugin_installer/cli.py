@@ -32,10 +32,8 @@ def main(ctx, plugin_name, operation, config_file):
     manager = PluginManager(config_file)
     manager.initialize_local_repository()
 
-    fn = getattr(manager, operation)
-
     try:
-        fn(plugin)
+        manager.run(operation, plugin)
     except BaseException as e:
         click.echo(e.msg)
     else:
