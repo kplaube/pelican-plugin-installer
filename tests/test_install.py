@@ -54,7 +54,7 @@ def test_install_plugin_from_unofficial_pelican_repository(mock_install_operatio
     os.system.assert_called_with(
         "git clone {0} {1}".format(
             'https://github.com/kplaube/extended_meta',
-            '/Users/klaus/.pelican/plugins/_unofficial/extended_meta'
+            src_path,
         )
     )
 
