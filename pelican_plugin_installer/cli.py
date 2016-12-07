@@ -1,6 +1,6 @@
 import click
 
-from .manager import Plugin, PluginManager
+from .manager import Manager
 from .exceptions import BaseException
 
 CONTEXT_SETTINGS = dict(
@@ -28,9 +28,10 @@ def main(ctx, plugin_name, operation, config_file):
         click.echo(ctx.get_help())
         return
 
-    plugin = Plugin(plugin_name)
-    manager = PluginManager(config_file)
+    manager = Manager(config_file)
     manager.initialize_local_repository()
+
+    plugin = manager.instance_plugin(plugin_name)
 
     try:
         manager.run(operation, plugin)
