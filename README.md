@@ -55,6 +55,14 @@ You can always ask for help using the `--help` option:
 $ pelican-plugin-installer --help
 ```
 
+### Installing unofficial plugins
+
+Sometimes you need to use some plugins that aren't inside the Pelican plugins repository. In that case, just use the Github URL as a parameter, during the installation process:
+
+```
+$ pelican-plugin-installer -i https://github.com/kplaube/extended_meta -c ~/my-pelican-site/pelicanconf.py
+```
+
 ## Contributing
 
 Contributions are very welcome!
